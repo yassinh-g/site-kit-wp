@@ -24,7 +24,6 @@ import { TYPE_MODULES } from 'GoogleComponents/data';
 import {
 	getTimeInSeconds,
 	numberFormat,
-	getDateRangeFrom,
 } from 'GoogleUtil';
 import { getDataTableFromData, TableOverflowContainer } from 'GoogleComponents/data-table';
 import PreviewTable from 'GoogleComponents/preview-table';

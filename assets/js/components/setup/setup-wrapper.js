@@ -181,7 +181,7 @@ class SetupWrapper extends Component {
 													googlesitekit-setup__intro-title
 													googlesitekit-overline
 												">
-													{ __( 'Connect Service', 'google-site-kit' ) }
+													{ __( 'HEYO', 'google-site-kit' ) }
 												</p>
 												{ setupModule }
 											</div>

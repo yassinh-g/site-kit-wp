@@ -19,9 +19,14 @@
 /**
  * External dependencies
  */
+
+/**
+ * Internal dependencies
+ */
 import getNoDataComponent from 'GoogleComponents/notifications/nodata';
 import getDataErrorComponent from 'GoogleComponents/notifications/data-error';
 import getSetupIncompleteComponent from 'GoogleComponents/notifications/setup-incomplete';
+import DateRangeContext from 'SiteKitCore/contexts/DateRangeContext';
 
 const {
 	addFilter,
@@ -119,7 +124,9 @@ const withData = (
 	}
 ) => {
 	// ...and returns another component...
-	return class NewComponent extends Component {
+	return class WithDataHOC extends Component {
+		static contextType = DateRangeContext;
+
 		constructor( props ) {
 			super( props );
 
@@ -136,7 +143,17 @@ const withData = (
 					this.setState( { data: false } );
 				}
 			);
+		}
 
+		componentDidMount() {
+			this.makeRequest();
+		}
+
+		componentDidUpdate() {
+			this.makeRequest();
+		}
+
+		makeRequest() {
 			/**
 			 * Handle a single datapoint returned from the data API.
 			 *
@@ -199,6 +216,9 @@ const withData = (
 						 */
 						addFilter( `googlesitekit.module${ acontext }DataRequest`,
 							`googlesitekit.data${ acontext }`, ( moduleData ) => {
+								if ( this.context.dateRange ) {
+									data.date_range = this.context.dateRange;
+								}
 								data.callback = ( returnedData ) => {
 									handleReturnedData( returnedData, data );
 								};
@@ -212,6 +232,9 @@ const withData = (
 					 */
 					addFilter( `googlesitekit.module${ data.context }DataRequest`,
 						`googlesitekit.data${ data.context }`, ( moduleData ) => {
+							if ( this.context.dateRange ) {
+								data.date_range = this.context.dateRange;
+							}
 							data.callback = ( returnedData ) => {
 								handleReturnedData( returnedData, data );
 							};
@@ -260,6 +283,7 @@ const withData = (
 					data={ data }
 					datapoint={ datapoint }
 					requestDataToState={ requestDataToState }
+					dateRange={ this.context.dateRange }
 					{ ...this.props }
 				/>
 			);

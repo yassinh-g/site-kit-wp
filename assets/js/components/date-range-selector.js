@@ -3,9 +3,21 @@
  */
 import { Select } from 'SiteKitCore/material-components';
 import PropTypes from 'prop-types';
+import { useContext as useContextReact } from 'react';
 
+/**
+ * Internal dependencies
+ */
+import DateRangeContext from 'SiteKitCore/contexts/DateRangeContext';
+
+const { useContext: useContextWP } = wp.element;
 const { _n, sprintf } = wp.i18n;
-const { Component } = wp.element;
+const { doAction } = wp.hooks;
+
+let useContext = useContextWP;
+if ( useContext === undefined ) {
+	useContext = useContextReact;
+}
 
 export const lastDaysOption = ( value ) => {
 	return {
@@ -18,39 +30,36 @@ export const lastDaysOption = ( value ) => {
 	};
 };
 
-class DateRangeSelector extends Component {
-	constructor( props ) {
-		super( props );
+const DateRangeSelector = ( props ) => {
+	const { dateRange, updateDateRange } = useContext( DateRangeContext );
+	const { defaultValue, options } = props;
 
-		this.handleSelection = this.handleSelection.bind( this );
-	}
+	const onChange = ( index, item ) => {
+		updateDateRange( item.dataset.value );
 
-	handleSelection( index, item ) {
-		console.log( { index, item } ); // eslint-disable-line
-		// // Trigger a data refresh.
-		// doAction( 'googlesitekit.moduleDataReset' );
+		// Trigger a data refresh.
+		doAction( 'googlesitekit.moduleDataReset' );
 		// doAction( 'googlesitekit.moduleLoaded', context );
-		// return false;
-		this.props.onChange( { value: item.dataset.value } );
-	}
+		doAction( 'googlesitekit.moduleLoaded', 'Dashboard' );
+		doAction( 'googlesitekit.moduleLoaded', 'Single' );
+		return false;
+	};
 
-	render() {
-		return (
-			<Select
-				enhanced
-				className="mdc-select--minimal"
-				name="time_period"
-				label=""
-				onEnhancedChange={ this.handleSelection }
-				options={ this.props.options }
-				value={ this.props.value }
-			/>
-		);
-	}
-}
+	return (
+		<Select
+			enhanced
+			className="mdc-select--minimal"
+			name="time_period"
+			label="Filter by date range"
+			onEnhancedChange={ onChange }
+			options={ options }
+			value={ dateRange || defaultValue }
+		/>
+	);
+};
 
 DateRangeSelector.defaultProps = {
-	value: '28',
+	defaultValue: '28',
 	options: [
 		lastDaysOption( '7' ),
 		lastDaysOption( '14' ),
@@ -60,7 +69,7 @@ DateRangeSelector.defaultProps = {
 };
 
 DateRangeSelector.propTypes = {
-	onChange: PropTypes.func.isRequired,
+	onChange: PropTypes.func,
 };
 
 export default DateRangeSelector;

@@ -19,6 +19,7 @@
 /**
  * External dependencies
  */
+import { useState as useStateReact } from 'react';
 import Header from 'GoogleComponents/header';
 import DateRangeSelector from 'GoogleComponents/date-range-selector';
 import PageHeader from 'GoogleComponents/page-header';
@@ -28,15 +29,32 @@ import 'GoogleComponents/notifications';
 /**
  * Internal dependencies
  */
+import DateRangeContext from 'SiteKitCore/contexts/DateRangeContext';
 import DashboardMain from './dashboard-main';
 import DashboardNotifications from './dashboard-notifications';
 
-const { Component, Fragment } = wp.element;
+const { Fragment, useState: useStateWP } = wp.element;
 const { __ } = wp.i18n;
 
-class DashboardApp extends Component {
-	render() {
-		return (
+let useState = useStateWP;
+if ( useState === undefined ) {
+	useState = useStateReact;
+}
+
+const DashboardApp = () => {
+	const [ dateRange, setDateRange ] = useState( '28' );
+
+	const updateDateRange = ( newDateRange ) => {
+		setDateRange( newDateRange );
+	};
+
+	const dateRangeContextValues = {
+		dateRange,
+		updateDateRange,
+	};
+
+	return (
+		<DateRangeContext.Provider value={ dateRangeContextValues }>
 			<Fragment>
 				<Header />
 				<DashboardNotifications />
@@ -66,7 +84,10 @@ class DashboardApp extends Component {
 										mdc-layout-grid__cell--align-middle
 										mdc-layout-grid__cell--align-right
 								">
-									<DateRangeSelector />
+									<DateRangeSelector
+										dateRange={ dateRange }
+										updateDateRange={ updateDateRange }
+									/>
 								</div>
 								<DashboardMain />
 							</div>
@@ -74,8 +95,8 @@ class DashboardApp extends Component {
 					</div>
 				</div>
 			</Fragment>
-		);
-	}
-}
+		</DateRangeContext.Provider>
+	);
+};
 
 export default DashboardApp;

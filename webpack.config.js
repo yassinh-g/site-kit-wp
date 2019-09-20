@@ -147,7 +147,7 @@ module.exports = ( env, argv ) => {
 							{
 								loader: 'eslint-loader',
 								options: {
-									failOnError: true,
+									failOnError: false,
 									formatter: require( 'eslint' ).CLIEngine.getFormatter( 'stylish' ),
 								},
 							},
@@ -223,7 +223,7 @@ module.exports = ( env, argv ) => {
 							{
 								loader: 'eslint-loader',
 								options: {
-									failOnError: true,
+									failOnError: false,
 									formatter: require( 'eslint' ).CLIEngine.getFormatter( 'stylish' ),
 								},
 							},

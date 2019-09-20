@@ -15,16 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
  * External dependencies
  */
-import DashboardAuthAlert from 'GoogleComponents/notifications/dashboard-auth-alert';
-import DashboardPermissionAlert from 'GoogleComponents/notifications/dashboard-permission-alert';
 import md5 from 'md5';
 
+/**
+ * Internal dependencies
+ */
+import DashboardAuthAlert from 'GoogleComponents/notifications/dashboard-auth-alert';
+import DashboardPermissionAlert from 'GoogleComponents/notifications/dashboard-permission-alert';
 import {
 	getStorage,
-	getCurrentDateRangeSlug,
 	fillFilterWithComponent,
 	getQueryParameter,
 	sortObjectProperties,
@@ -56,23 +59,6 @@ const lazilySetupLocalCache = () => {
 	if ( 'object' !== typeof googlesitekit.admin.datacache ) {
 		googlesitekit.admin.datacache = {};
 	}
-};
-
-/**
- * Gets a copy of the given data request object with the data.dateRange populated via filter, if not set.
- * Respects the current dateRange value, if set.
- *
- * @param {Object} originalRequest Data request object.
- * @param {string} dateRange Default date range slug to use if not specified in the request.
- * @return {Object} New data request object.
- */
-const requestWithDateRange = ( originalRequest, dateRange ) => {
-	// Make copies for reference safety, ensuring data exists.
-	const request = { data: {}, ...originalRequest };
-	// Use the dateRange in request.data if passed, fallback to provided default value.
-	request.data = { dateRange, ...request.data };
-
-	return request;
 };
 
 const dataAPI = {
@@ -109,9 +95,7 @@ const dataAPI = {
 		return new Promise( ( resolve, reject ) => {
 			try {
 				const responseData = [];
-				const dateRange = getCurrentDateRangeSlug();
-				each( combinedRequest, ( originalRequest ) => {
-					const request = requestWithDateRange( originalRequest, dateRange );
+				each( combinedRequest, ( request ) => {
 					request.key = this.getCacheKey( request.type, request.identifier, request.datapoint, request.data );
 					const cache = this.getCache( request.key, request.maxAge );
 
@@ -139,9 +123,7 @@ const dataAPI = {
 		// First, resolve any cache matches immediately, queue resolution of the rest.
 		let dataRequest = [];
 		let cacheDelay = 25;
-		const dateRange = getCurrentDateRangeSlug();
-		each( combinedRequest, ( originalRequest ) => {
-			const request = requestWithDateRange( originalRequest, dateRange );
+		each( combinedRequest, ( request ) => {
 			request.key = this.getCacheKey( request.type, request.identifier, request.datapoint, request.data );
 			const cache = this.getCache( request.key, request.maxAge );
 

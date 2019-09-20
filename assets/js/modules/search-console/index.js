@@ -106,10 +106,6 @@ addFilter( 'googlesitekit.ModuleApp-' + slug,
 	'googlesitekit.ModuleApp',
 	addGoogleSitekitSearchConsoleDashboardWidget );
 
-addFilter( `googlesitekit.showDateRangeSelector-${ slug }`,
-	'googlesitekit.searchConsoleShowDateRangeSelector',
-	() => true );
-
 /**
  * Add components to the adminbar.
  */

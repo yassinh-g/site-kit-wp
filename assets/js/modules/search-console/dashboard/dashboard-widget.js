@@ -32,7 +32,6 @@ import Alert from 'GoogleComponents/alert';
 import ProgressBar from 'GoogleComponents/progress-bar';
 import getNoDataComponent from 'GoogleComponents/notifications/nodata';
 import getDataErrorComponent from 'GoogleComponents/notifications/data-error';
-import { getDateRangeFrom } from 'GoogleUtil';
 import HelpLink from 'GoogleComponents/help-link';
 
 const { Component, Fragment } = wp.element;
@@ -146,7 +145,7 @@ class GoogleSitekitSearchConsoleDashboardWidget extends Component {
 
 		// Hide AdSense data display when we don't have data.
 		const wrapperClass = ! loading && receivingData ? '' : 'googlesitekit-nodata';
-		const dateRangeFrom = getDateRangeFrom();
+		const dateRangeFrom = '29';
 
 		const searchConsoleDeepLink = sprintf( 'https://search.google.com/u/1/search-console?resource_id=%s', googlesitekit.admin.siteURL );
 

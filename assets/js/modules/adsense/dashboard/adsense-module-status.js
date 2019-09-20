@@ -39,7 +39,8 @@ class AdSenseModuleStatus extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			loadStatus: __( 'Loading…', 'google-site-kit' ),
+			accountStatus: null,
+			loadStatus: null, // __( 'Loading…', 'google-site-kit' ),
 			existingTag: false,
 		};
 		this.updateLoadStatus = this.updateLoadStatus.bind( this );
@@ -59,7 +60,8 @@ class AdSenseModuleStatus extends Component {
 		this.setState( { existingTag } );
 
 		getAdSenseAccountStatus( this.updateLoadStatus, existingTag ).then( ( results ) => {
-			this.setState( results );
+			console.log('getAdSenseAccountStatus RESULTS', results); // eslint-disable-line
+			this.setState( { accountStatus: results.accountStatus } );
 		} );
 	}
 
@@ -123,6 +125,8 @@ class AdSenseModuleStatus extends Component {
 				<AdSenseInProcessStatus status="adsDisplayPending" />
 			);
 		}
+
+		return <div>HELLO TESTING</div>;
 
 		return (
 			<AdSenseSetupInstructions
