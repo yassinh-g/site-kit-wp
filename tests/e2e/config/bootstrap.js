@@ -28,7 +28,7 @@ import {
 /**
  * Environment variables
  */
-const { PUPPETEER_TIMEOUT } = process.env;
+const { DISPLAY_HTTP_ERRORS, PUPPETEER_TIMEOUT } = process.env;
 
 /**
  * Set of console logging types observed to protect against unexpected yet
@@ -127,6 +127,13 @@ function observeConsoleLogging() {
 			text.startsWith( 'Failed to decode downloaded font:' ) ||
 			text.startsWith( 'OTS parsing error:' )
 		) {
+			return;
+		}
+
+		// Silence errors due to intentional 403/404/500 errors. In the case that
+		// this silences legitimate errors, the `DISPLAY_HTTP_ERRORS` env variable
+		// can be supplied to the tests.
+		if ( ! DISPLAY_HTTP_ERRORS && text.startsWith( 'Failed to load resource: the server responded with a status of' ) ) {
 			return;
 		}
 
