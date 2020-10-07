@@ -268,6 +268,9 @@ final class OAuth_Client {
 		$client->setScopes( $this->get_required_scopes() );
 		$client->prepareScopes();
 
+		// Enable exponential retries, try up to three times.
+		$client->setConfig( 'retry', array( 'retries' => 3 ) );
+
 		// This is called when the client refreshes the access token on-the-fly.
 		$client->setTokenCallback(
 			function( $cache_key, $access_token ) use ( $client ) {

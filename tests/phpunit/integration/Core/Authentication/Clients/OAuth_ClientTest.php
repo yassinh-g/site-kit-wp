@@ -36,6 +36,11 @@ class OAuth_ClientTest extends TestCase {
 		$client = new OAuth_Client( new Context( GOOGLESITEKIT_PLUGIN_MAIN_FILE ) );
 
 		$this->assertInstanceOf( 'Google\Site_Kit\Core\Authentication\Clients\Google_Site_Kit_Client', $client->get_client() );
+
+		// Verify the default client config has retries enabled.
+		$retry = $client->getConfig( 'retry' );
+		assertEquals( $retry['retries'], 3 );
+
 	}
 
 	public function test_refresh_token() {
