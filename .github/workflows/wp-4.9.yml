@@ -50,9 +50,5 @@ jobs:
         run: echo $PWD
       - name: LS
         run: ls -l .
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(job.services.cli) }}
-        run: echo "$GITHUB_CONTEXT"
       - name: Version
-        run: docker exec ${{ job.services.cli.label }} wp core version --extra
+        run: docker exec ${{ job.services.cli.id }} wp core version --extra
