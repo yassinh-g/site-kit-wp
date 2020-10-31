@@ -41,8 +41,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
       - uses: actions/cache@v2
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
@@ -51,7 +50,11 @@ jobs:
             ${{ runner.os }}-composer-
       - name: Composer Install
         run: composer install --no-dev --no-interaction --no-progress
-      - name: Import database
-        run: docker run -i --rm --volumes-from ${{ job.services.wordpress.id }} --network ${{ job.services.wordpress.network }} wordpress:cli wp db import wp-content/plugins/google-site-kit/bin/local-env/dump.sql
+      - name: Get WP CLI Image
+        run: |
+          docker pull wordpress:cli
+          alias wp="docker run -i --rm --volumes-from ${{ job.services.wordpress.id }} --network ${{ job.services.wordpress.network }} wordpress:cli wp"
+      - name: Import Database
+        run: wp db import wp-content/plugins/google-site-kit/bin/local-env/dump.sql
       - name: List posts
-        run: docker run -i --rm --volumes-from ${{ job.services.wordpress.id }} --network ${{ job.services.wordpress.network }} wordpress:cli wp post list
+        run: wp config list
