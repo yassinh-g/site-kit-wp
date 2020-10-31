@@ -26,9 +26,9 @@ jobs:
           - 9002:80
         volumes:
           - wordpress_data:/var/www/html
-          # - ../../:/var/www/html/wp-content/plugins/google-site-kit
-          # - ../../tests/e2e/plugins:/var/www/html/wp-content/plugins/google-site-kit-test-plugins
-          # - ../../tests/e2e/mu-plugins:/var/www/html/wp-content/mu-plugins
+          - /home/runner/work/site-kit-wp/site-kit-wp/:/var/www/html/wp-content/plugins/google-site-kit
+          - /home/runner/work/site-kit-wp/site-kit-wp/tests/e2e/plugins:/var/www/html/wp-content/plugins/google-site-kit-test-plugins
+          - /home/runner/work/site-kit-wp/site-kit-wp/tests/e2e/mu-plugins:/var/www/html/wp-content/mu-plugins
         env:
           WORDPRESS_DB_HOST: mysql
           WORDPRESS_DB_PASSWORD: example
@@ -40,11 +40,13 @@ jobs:
         image: wordpress:cli
         volumes:
           - wordpress_data:/var/www/html
-          # - ../../:/var/www/html/wp-content/plugins/google-site-kit
-          # - ../../tests/e2e/mu-plugins:/var/www/html/wp-content/mu-plugins
+          - /home/runner/work/site-kit-wp/site-kit-wp/:/var/www/html/wp-content/plugins/google-site-kit
+          - /home/runner/work/site-kit-wp/site-kit-wp/tests/e2e/mu-plugins:/var/www/html/wp-content/mu-plugins
     steps:
       - uses: actions/checkout@v2
       - name: PWD
         run: echo $PWD
       - name: LS
         run: ls -l .
+      - name: Version
+        run: docker exec cli wp core version --extra
