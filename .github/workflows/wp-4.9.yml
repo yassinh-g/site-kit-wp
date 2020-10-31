@@ -39,6 +39,18 @@ jobs:
         # --mount type=bind,source=/home/runner/work/site-kit-wp/site-kit-wp/tests/e2e/mu-plugins,target=/var/www/html/wp-content/mu-plugins,readonly
     steps:
       - uses: actions/checkout@v2
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+      - name: Composer Install
+        run: composer install --no-dev --no-interaction --no-progress
       - name: Import database
         run: docker run -i --rm --volumes-from ${{ job.services.wordpress.id }} --network ${{ job.services.wordpress.network }} wordpress:cli wp db import wp-content/plugins/google-site-kit/bin/local-env/dump.sql
       - name: List posts
