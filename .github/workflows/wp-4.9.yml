@@ -44,3 +44,7 @@ jobs:
           # - ../../tests/e2e/mu-plugins:/var/www/html/wp-content/mu-plugins
     steps:
       - uses: actions/checkout@v2
+      - name: PWD
+        run: echo $PWD
+      - name: LS
+        run: ls -l .
