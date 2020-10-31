@@ -48,7 +48,8 @@
     "lint:css": "stylelint ./assets/sass --syntax scss",
     "env:start": "./bin/local-env/start.sh",
     "env:stop": "./bin/local-env/stop.sh",
-    "env:reset-site": "./bin/local-env/install-wordpress.sh --reset-site"
+    "env:reset-site": "./bin/local-env/install-wordpress.sh --reset-site",
+    "env:export": "./bin/local-env/export.sh"
   },
   "browserslist": [
     "extends @wordpress/browserslist-config"

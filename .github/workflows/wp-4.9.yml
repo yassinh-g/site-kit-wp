@@ -37,18 +37,9 @@ jobs:
           --mount type=bind,source=/home/runner/work/site-kit-wp/site-kit-wp,target=/var/www/html/wp-content/plugins/google-site-kit,readonly
         # --mount type=bind,source=/home/runner/work/site-kit-wp/site-kit-wp/tests/e2e/plugins,target=/var/www/html/wp-content/plugins/google-site-kit-test-plugins,readonly
         # --mount type=bind,source=/home/runner/work/site-kit-wp/site-kit-wp/tests/e2e/mu-plugins,target=/var/www/html/wp-content/mu-plugins,readonly
-      # cli:
-      #   image: wordpress:cli
-      #   volumes:
-      #     - wordpress_data:/var/www/html
-      #   options: >-
-      #     --mount type=bind,source=/home/runner/work/site-kit-wp/site-kit-wp/,target=/var/www/html/wp-content/plugins/google-site-kit,readonly
-      #   # --mount type=bind,source=/home/runner/work/site-kit-wp/site-kit-wp/tests/e2e/mu-plugins,target=/var/www/html/wp-content/mu-plugins,readonly
     steps:
       - uses: actions/checkout@v2
-      - name: PWD
-        run: echo $PWD
-      - name: LS
-        run: ls -l .
-      - name: Version
-        run: docker run -i --rm --volumes-from ${{ job.services.wordpress.id }} --network ${{ job.services.wordpress.network }} wordpress:cli wp core version --extra
+      - name: Import database
+        run: docker run -i --rm --volumes-from ${{ job.services.wordpress.id }} --network ${{ job.services.wordpress.network }} wordpress:cli wp db import wp-content/plugins/google-site-kit/bin/local-env/dump.sql
+      - name: List posts
+        run: docker run -i --rm --volumes-from ${{ job.services.wordpress.id }} --network ${{ job.services.wordpress.network }} wordpress:cli wp post list
