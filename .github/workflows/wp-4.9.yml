@@ -26,9 +26,6 @@ jobs:
           - 9002:80
         volumes:
           - wordpress_data:/var/www/html
-          # - /home/runner/work/site-kit-wp/site-kit-wp/:/var/www/html/wp-content/plugins/google-site-kit
-          # - /home/runner/work/site-kit-wp/site-kit-wp/tests/e2e/plugins:/var/www/html/wp-content/plugins/google-site-kit-test-plugins
-          # - /home/runner/work/site-kit-wp/site-kit-wp/tests/e2e/mu-plugins:/var/www/html/wp-content/mu-plugins
         env:
           WORDPRESS_DB_HOST: mysql
           WORDPRESS_DB_PASSWORD: example
@@ -37,20 +34,25 @@ jobs:
           WORDPRESS_CONFIG_EXTRA: |
             define( 'SCRIPT_DEBUG', true );
         options: >-
-          --mount type=bind,source=/home/runner/work/site-kit-wp/site-kit-wp/,target=/var/www/html/wp-content/plugins/google-site-kit,readonly
+          --mount type=bind,source=/home/runner/work/site-kit-wp/site-kit-wp,target=/var/www/html/wp-content/plugins/google-site-kit,readonly
+          --mount type=bind,source=/home/runner/work/site-kit-wp/site-kit-wp/tests/e2e/plugins,target=/var/www/html/wp-content/plugins/google-site-kit-test-plugins,readonly
+          --mount type=bind,source=/home/runner/work/site-kit-wp/site-kit-wp/tests/e2e/mu-plugins,target=/var/www/html/wp-content/mu-plugins,readonly
       cli:
         image: wordpress:cli
         volumes:
           - wordpress_data:/var/www/html
-          # - /home/runner/work/site-kit-wp/site-kit-wp/:/var/www/html/wp-content/plugins/google-site-kit
-          # - /home/runner/work/site-kit-wp/site-kit-wp/tests/e2e/mu-plugins:/var/www/html/wp-content/mu-plugins
         options: >-
           --mount type=bind,source=/home/runner/work/site-kit-wp/site-kit-wp/,target=/var/www/html/wp-content/plugins/google-site-kit,readonly
+          --mount type=bind,source=/home/runner/work/site-kit-wp/site-kit-wp/tests/e2e/mu-plugins,target=/var/www/html/wp-content/mu-plugins,readonly
     steps:
       - uses: actions/checkout@v2
       - name: PWD
         run: echo $PWD
       - name: LS
         run: ls -l .
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(job.services.cli) }}
+        run: echo "$GITHUB_CONTEXT"
       - name: Version
-        run: docker exec cli wp core version --extra
+        run: docker exec ${{ job.services.cli.label }} wp core version --extra
