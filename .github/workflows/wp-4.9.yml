@@ -51,10 +51,8 @@ jobs:
       - name: Composer Install
         run: composer install --no-dev --no-interaction --no-progress
       - name: Get WP CLI Image
-        run: |
-          docker pull wordpress:cli
-          alias wp="docker run -i --rm --volumes-from ${{ job.services.wordpress.id }} --network ${{ job.services.wordpress.network }} wordpress:cli wp"
+        run: docker pull wordpress:cli
       - name: Import Database
-        run: wp db import wp-content/plugins/google-site-kit/bin/local-env/dump.sql
+        run: docker run -i --rm --volumes-from ${{ job.services.wordpress.id }} --network ${{ job.services.wordpress.network }} wordpress:cli wp db import wp-content/plugins/google-site-kit/bin/local-env/dump.sql
       - name: List posts
-        run: wp config list
+        run: docker run -i --rm --volumes-from ${{ job.services.wordpress.id }} --network ${{ job.services.wordpress.network }} wordpress:cli wp config list
