@@ -24,7 +24,7 @@ jobs:
           repository: eugene-manuilov/site-kit-wp/wp-49
           tags: "20201101.0"
           build_args: |
-            WP_IMAGE=4.9
+            WP_IMAGE=wordpress:4.9
 
   # e2e:
   #   name: Run E2E Tests
