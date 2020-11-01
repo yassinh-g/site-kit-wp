@@ -32,7 +32,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: docker.pkg.github.com
           repository: eugene-manuilov/site-kit-wp/wp-49
-          tags: site-kit-wp/wp-49:20201101.0
+          tags: "20201101.0"
           build-args: |
             WP_IMAGE="wordpress:4.9"
 
