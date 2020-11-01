@@ -1,6 +1,6 @@
-ARG WP_IMAGE=wordpress:latest
+ARG WP_IMAGE=latest
 
-FROM ${WP_IMAGE}
+FROM wordpress:${WP_IMAGE}
 
 ENV WORDPRESS_DB_HOST="mysql"
 ENV WORDPRESS_DB_PASSWORD="example"
