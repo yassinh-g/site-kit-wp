@@ -631,6 +631,13 @@ final class Assets {
 			'isNetworkMode'    => $this->context->is_network_mode(),
 			'timezone'         => get_option( 'timezone_string' ),
 			'siteName'         => get_bloginfo( 'name' ),
+			'enabledFeatures'  => [
+				'widgets.dashboard'       => true,
+				'widgets.pageDashboard'   => true,
+				'userInput'               => true,
+				'storeErrorNotifications' => true,
+				'serviceSetupV2'          => true,
+			],
 		);
 
 		/**
