@@ -19,6 +19,7 @@
 export { default as accounts } from './accounts';
 export { default as accountsMultiple } from './accounts-multiple';
 export { default as clients } from './clients';
+export { default as dashboardSummaryWidgetData } from './dashboard-summary-widget-data.json';
 export { default as clientsNoAFC } from './clients-no-afc';
 export { default as urlchannels } from './urlchannels';
 export { default as alerts } from './alerts';
