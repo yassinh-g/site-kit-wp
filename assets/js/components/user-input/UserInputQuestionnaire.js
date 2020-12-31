@@ -19,8 +19,9 @@
 /**
  * WordPress dependencies
  */
-import { useState, useCallback, Fragment } from '@wordpress/element';
+import { useCallback, Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useHash } from 'react-use';
 
 /**
  * Internal dependencies
@@ -40,7 +41,11 @@ import {
 } from './util/constants';
 
 export default function UserInputQuestionnaire() {
-	const [ activeSlug, setActiveSlug ] = useState( USER_INPUT_QUESTION_ROLE );
+	const [ activeQuestion, setActiveQuestion ] = useHash();
+
+	// Get the current question number, defaulting to the first question if no hash is supplied.
+	const questionNumber = isNaN( parseInt( activeQuestion.replace( '#question-', '' ) ) ) ? 1 : parseInt( activeQuestion.replace( '#question-', '' ) );
+	const activeSlugIndex = questionNumber - 1;
 
 	const questions = [
 		USER_INPUT_QUESTION_ROLE,
@@ -58,21 +63,22 @@ export default function UserInputQuestionnaire() {
 	} = getUserInputAnwsers();
 
 	const steps = [ ...questions, 'preview' ];
-	const activeSlugIndex = steps.indexOf( activeSlug );
+	const activeSlug = steps[ activeSlugIndex ];
 
 	const next = useCallback( () => {
-		setActiveSlug( steps[ activeSlugIndex + 1 ] );
+		setActiveQuestion( `#question-${ questionNumber + 1 }` );
 	}, [ activeSlugIndex ] );
 
 	const goTo = useCallback( ( num = 1 ) => {
 		if ( steps.length >= num && num > 0 ) {
-			setActiveSlug( steps[ num - 1 ] );
+			// num is already `questionNumber - 1` as it as a index from 0.
+			setActiveQuestion( `#question-${ num }` );
 			global.scrollTo( 0, 0 );
 		}
 	}, [ activeSlugIndex ] );
 
 	const back = useCallback( () => {
-		setActiveSlug( steps[ activeSlugIndex - 1 ] );
+		setActiveQuestion( `#question-${ questionNumber - 1 }` );
 	}, [ activeSlugIndex ] );
 
 	return (
@@ -171,7 +177,7 @@ export default function UserInputQuestionnaire() {
 			) }
 
 			{ activeSlug === 'preview' && (
-				<UserInputPreview back={ back } goTo={ goTo } />
+				<UserInputPreview back={ back } goTo={ goTo } showSubmit />
 			) }
 		</Fragment>
 	);

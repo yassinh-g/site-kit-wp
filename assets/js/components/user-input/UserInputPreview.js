@@ -43,7 +43,7 @@ import { getUserInputAnwsers } from './util/constants';
 import { addQueryArgs } from '@wordpress/url';
 const { useSelect, useDispatch } = Data;
 
-export default function UserInputPreview( { back, goTo } ) {
+export default function UserInputPreview( { back, goTo, showSubmit } ) {
 	const [ isNavigating, setIsNavigating ] = useState( false );
 
 	const dashboardURL = useSelect( ( select ) => select( CORE_SITE ).getAdminURL( 'googlesitekit-dashboard' ) );
@@ -121,6 +121,7 @@ export default function UserInputPreview( { back, goTo } ) {
 
 							{ error && <ErrorNotice error={ error } /> }
 
+							{ showSubmit &&
 							<div className="googlesitekit-user-input__preview--footer">
 								<UserInputQuestionNotice />
 
@@ -129,6 +130,7 @@ export default function UserInputPreview( { back, goTo } ) {
 									<Button onClick={ submitChanges }>{ __( 'Submit', 'google-site-kit' ) }</Button>
 								</div>
 							</div>
+							}
 						</Fragment>
 					) }
 				</Cell>
@@ -140,4 +142,5 @@ export default function UserInputPreview( { back, goTo } ) {
 UserInputPreview.propTypes = {
 	back: PropTypes.func.isRequired,
 	goTo: PropTypes.func.isRequired,
+	showSubmit: PropTypes.bool.isRequired,
 };

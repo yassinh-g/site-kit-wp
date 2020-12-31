@@ -1,5 +1,5 @@
 /**
- * SettingsOverview component.
+ * SettingsAdmin component.
  *
  * Site Kit by Google, Copyright 2019 Google LLC
  *
@@ -29,10 +29,66 @@ import Layout from '../layout/layout';
 import OptIn from '../optin';
 import VisuallyHidden from '../VisuallyHidden';
 import ResetButton from '../ResetButton';
+import UserInputPreview from '../user-input/UserInputPreview';
+import UserInputSettings from '../notifications/UserInputSettings';
+import { getSiteKitAdminURL } from '../../util';
+
+import Data from 'googlesitekit-data';
+import { STORE_NAME as CORE_USER } from '../../googlesitekit/datastore/user/constants';
+const { useSelect } = Data;
 
 const SettingsAdmin = () => {
+	const userInputState = useSelect( ( select ) => select( CORE_USER ).getUserInputState() );
+
 	return (
 		<Fragment>
+			{ userInputState === 'completed' &&
+			<div className="
+				mdc-layout-grid__cell
+				mdc-layout-grid__cell--span-12
+			">
+				<Layout>
+					<div className="
+						googlesitekit-settings-module
+						googlesitekit-settings-module--active
+					">
+						<div className="mdc-layout-grid">
+							<div className="mdc-layout-grid__inner">
+								<div className="
+									mdc-layout-grid__cell
+									mdc-layout-grid__cell--span-6-desktop
+									mdc-layout-grid__cell--span-4-tablet
+									mdc-layout-grid__cell--span-4-phone
+								">
+									<h3 className="
+										googlesitekit-heading-4
+										googlesitekit-settings-module__title
+									">
+										{ __( 'Your site goals', 'google-site-kit' ) }
+									</h3>
+								</div>
+								<div className="
+									mdc-layout-grid__cell
+									mdc-layout-grid__cell--span-12
+								">
+									<UserInputPreview back={ () => {} } goTo={ ( questionNumber ) => {
+										global.location.assign( `${ getSiteKitAdminURL( 'googlesitekit-user-input' ) }#question-${ questionNumber }` );
+									} } showSubmit={ false } />
+								</div>
+							</div>
+						</div>
+					</div>
+				</Layout>
+			</div>
+			}
+			{ userInputState === 'required' &&
+				<div className="
+					mdc-layout-grid__cell
+					mdc-layout-grid__cell--span-12
+				">
+					<UserInputSettings />
+				</div>
+			}
 			<div className="
 				mdc-layout-grid__cell
 				mdc-layout-grid__cell--span-12

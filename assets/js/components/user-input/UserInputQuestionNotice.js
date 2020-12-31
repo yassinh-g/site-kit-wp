@@ -30,7 +30,7 @@ import { sanitizeHTML } from '../../util';
 const { useSelect } = Data;
 
 export default function UserInputQuestionNotice() {
-	const settingsURL = useSelect( ( select ) => select( CORE_SITE ).getAdminURL( 'googlesitekit-settings' ) );
+	const settingsURL = `${ useSelect( ( select ) => select( CORE_SITE ).getAdminURL( 'googlesitekit-settings' ) ) }#admin`;
 
 	const notice = sprintf(
 		/* translators: %s: Settings page URL */
