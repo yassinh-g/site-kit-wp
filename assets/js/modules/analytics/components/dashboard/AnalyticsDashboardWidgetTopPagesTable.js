@@ -42,6 +42,7 @@ import { getTopPagesReportDataDefaults } from '../../util';
 import TableOverflowContainer from '../../../../components/TableOverflowContainer';
 import Link from '../../../../components/Link';
 const { useSelect, withSelect } = Data;
+import { generateDateRangeArgs } from '../../util/report-date-range-args';
 
 const AnalyticsDashboardWidgetTopPagesTable = ( props ) => {
 	const { data, colspan } = props;
@@ -106,6 +107,7 @@ const AnalyticsDashboardWidgetTopPagesTable = ( props ) => {
 			const serviceURL = select( MODULES_ANALYTICS ).getServiceReportURL( 'content-drilldown', {
 				'explorer-table.plotKeys': '[]',
 				'_r.drilldown': `analytics.pagePath:${ href }`,
+				...generateDateRangeArgs( dateRangeDates ),
 			} );
 
 			return {
@@ -122,6 +124,7 @@ const AnalyticsDashboardWidgetTopPagesTable = ( props ) => {
 			'mdc-layout-grid__cell',
 			`mdc-layout-grid__cell--span-${ colspan }`
 		) }>
+			zoe mamaa
 			<TableOverflowContainer>
 				{ dataTable }
 			</TableOverflowContainer>
