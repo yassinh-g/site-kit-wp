@@ -13,8 +13,10 @@ namespace Google\Site_Kit\Core\Admin;
 use Google\Site_Kit\Context;
 use Google\Site_Kit\Core\Assets\Assets;
 use Google\Site_Kit\Core\Authentication\Authentication;
+use Google\Site_Kit\Core\REST_API\REST_Routes;
 use Google\Site_Kit\Core\Modules\Modules;
 use Google\Site_Kit\Core\Permissions\Permissions;
+use WP_REST_Request;
 
 /**
  * Class managing admin screens.
@@ -365,10 +367,93 @@ final class Screens {
 					}
 
 					$notification = $context->input()->filter( INPUT_GET, 'notification' );
-					$error        = $context->input()->filter( INPUT_GET, 'error' );
+					$setup = $context->input()->filter( INPUT_GET, 'setup' );
+					$error = $context->input()->filter( INPUT_GET, 'error' );
+					$gaProfileId = $context->input()->filter( INPUT_GET, 'gaProfileId' );
+					$gaAccountId = $context->input()->filter( INPUT_GET, 'gaAccountId' );
 
 					// Redirect to dashboard if success parameter indicator.
 					if ( 'authentication_success' === $notification && empty( $error ) ) {
+						if ( $gaProfileId && $gaAccountId ) {
+							if ( 'analytics' === $setup ) {
+								// Check if we need to reauthenticate to configure Google Analytics
+								if ( $authentication->get_oauth_client()->needs_reauthentication() ) {
+									wp_safe_redirect(
+										add_query_arg(
+											array(
+												'redirect' => urlencode(
+													$context->admin_url(
+														'splash',
+														array(
+															'setup' => 'analytics',
+															'gaProfileId' => $gaProfileId,
+															'gaAccountId' => $gaAccountId,
+														)
+													)
+												),
+											),
+											$authentication->get_connect_url()
+										)
+									);
+									exit();
+								}
+								// Fetch accessible profiles in selected account
+								$profilesRequest = new WP_REST_Request( 'GET', '/' . REST_Routes::REST_ROOT . '/modules/analytics/data/properties-profiles' );
+								$profilesRequest->set_param(
+									'accountID',
+									$gaAccountId
+								);
+								$response = rest_do_request( $profilesRequest );
+								if ( 200 === $response->status ) {
+									$data = (array) $response->get_data();
+									foreach ( $data['profiles'] as $profile ) {
+										// Pick profile id with the matching id and configure analytics module
+										if ( $profile['id'] == $gaProfileId ) {
+											$request = new WP_REST_Request( 'POST', '/' . REST_Routes::REST_ROOT . '/modules/analytics/data/settings' );
+											$request->set_body_params(
+												array(
+													'data' => array(
+														'ownerID' => 0,
+														'accountID' => $profile['accountId'],
+														'adsenseLinked' => false,
+														'anonymizeIP' => true,
+														'internalWebPropertyID' => $profile['internalWebPropertyId'],
+														'profileID' => $profile['id'],
+														'propertyID' => $profile['webPropertyId'],
+														'trackingDisabled' => array( 'loggedinUsers' ),
+													),
+												)
+											);
+											rest_do_request( $request );
+										}
+									}
+								}
+							} else {
+								// Activate GA profile.
+								$request = new WP_REST_Request( 'POST', '/' . REST_Routes::REST_ROOT . '/core/modules/data/activation' );
+								$request->set_body_params(
+									array(
+										'data' => array(
+											'slug'   => 'analytics',
+											'active' => true,
+										),
+									)
+								);
+								rest_do_request( $request );
+								wp_safe_redirect(
+									$context->admin_url(
+										'splash',
+										array(
+											'notification' => 'authentication_success',
+											'setup'        => 'analytics',
+											'gaProfileId'  => $gaProfileId,
+											'gaAccountId'  => $gaAccountId,
+										)
+									)
+								);
+								exit();
+							}
+						}
 						wp_safe_redirect(
 							$context->admin_url(
 								'dashboard',

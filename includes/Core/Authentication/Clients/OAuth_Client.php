@@ -788,6 +788,20 @@ final class OAuth_Client {
 			// No redirect_url is set, use default page.
 			$redirect_url = $this->context->admin_url( 'splash', array( 'notification' => 'authentication_success' ) );
 		}
+		$input = $this->context->input();
+
+		// Pass Google Analytics Ids
+		$gaProfileId = $input->filter( INPUT_GET, 'gaProfileId' );
+		$gaAccountId = $input->filter( INPUT_GET, 'gaAccountId' );
+		if ( $gaProfileId && $gaAccountId ) {
+			$redirect_url = add_query_arg(
+				array(
+					'gaProfileId' => $gaProfileId,
+					'gaAccountId' => $gaAccountId,
+				),
+				$redirect_url
+			);
+		}
 
 		wp_safe_redirect( $redirect_url );
 		exit();
